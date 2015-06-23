@@ -21,8 +21,6 @@ readMore.directive('readMore', ['$compile','$interpolate',function($compile, $in
     return {
         restrict: 'A',
         scope: {},
-        controller: function($element, $scope){
-        },
         compile : function(element, attrs){
             return {
                 post: function(scope, element, attrs){
