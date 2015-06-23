@@ -9,42 +9,46 @@
  */
 
 /*global angular*/
-var readMore = angular.module('readMore', []);
+var readMore = angular.module('readMore', ['ngSanitize']);
 
-readMore.directive('readMore', function() {
+var readMoreTemplate = "<span><span ng-bind-html='text | readMoreFilter:[text, countingWords, textLength]'></span>" +
+            "<a ng-show='showLinks' ng-click='changeLength()' class='readMoreControls'>" +
+            "<strong ng-show='isExpanded'> {{::showLessText}}</strong>" +
+            "<strong ng-show='!isExpanded'> {{::showMoreText}}</strong>" +
+            "</a></span>";
+
+readMore.directive('readMore', ['$compile','$interpolate',function($compile, $interpolate) {
     return {
-        restrict: 'AE',
-        replace: true,
-        scope: {
-            text: '=ngModel'
+        restrict: 'A',
+        scope: {},
+        controller: function($element, $scope){
         },
-        template:  "<p> {{text | readMoreFilter:[text, countingWords, textLength] }}" +
-            "<a ng-show='showLinks' ng-click='changeLength()' class='color3'>" +
-            "<strong ng-show='isExpanded'>  Show Less</strong>" +
-            "<strong ng-show='!isExpanded'>  Show More</strong>" +
-            "</a>" +
-            "</p>",
-        controller: ['$scope', '$attrs', '$element',
-            function($scope, $attrs) {
-                $scope.textLength = $attrs.length;
-                $scope.isExpanded = false; // initialise extended status
-                $scope.countingWords = $attrs.words !== undefined ? ($attrs.words === 'true') : true; //if this attr is not defined the we are counting words not characters
-
-                if (!$scope.countingWords && $scope.text.length > $attrs.length) {
-                    $scope.showLinks = true;
-                } else if ($scope.countingWords && $scope.text.split(" ").length > $attrs.length) {
-                    $scope.showLinks = true;
-                } else {
-                    $scope.showLinks = false;
+        compile : function(element, attrs){
+            return {
+                post: function(scope, element, attrs){
+                    scope.text = element.html().trim();
+                    scope.showLessText = attrs.showLessText || 'Show Less';
+                    scope.showMoreText = attrs.showMoreText || 'Show More';
+                    scope.textLength = attrs.length;
+                    scope.isExpanded = false; // initialise extended status
+                    scope.countingWords = attrs.words !== undefined ? (attrs.words === 'true') : true; //if this attr is not defined the we are counting words not characters
+                    if (!scope.countingWords && scope.text.length > attrs.length) {
+                        scope.showLinks = true;
+                    } else if (scope.countingWords && scope.text.split(/\s+/).length > attrs.length) {
+                        scope.showLinks = true;
+                    } else {
+                        scope.showLinks = false;
+                    }
+                    scope.changeLength = function (card) {
+                        scope.isExpanded = !scope.isExpanded;
+                        scope.textLength = scope.textLength !== attrs.length ?  attrs.length : scope.text.length;
+                    };
+                    element.html($compile(readMoreTemplate)(scope));
                 }
-
-                $scope.changeLength = function (card) {
-                    $scope.isExpanded = !$scope.isExpanded;
-                    $scope.textLength = $scope.textLength !== $attrs.length ?  $attrs.length : $scope.text.length;
-                };
-            }]
+            }
+        }
     };
-});
+}]);
 readMore.filter('readMoreFilter', function() {
     return function(str, args) {
         var strToReturn = str,

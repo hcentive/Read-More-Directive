@@ -16,17 +16,18 @@
 		<div class="page-header">
 
 			<h1> Show 50 words</h1>
-			<p read-more ng-model="content" words="true" length="50"></p>
-
-			<h1> Show 50 characters</h1>
-			<p read-more ng-model="content" words="false" length="50"></p>
+			<p read-more words="true" length="7">
+Abc efgh ijk lml ljm <span>12354</span>sfdsffds sdfsdf sdfsdf sdfsdf
+			</p>
 
 		</div>
 	</div>
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<!--<script src="./bower/jquery/dist/jquery.min.js"></script>-->
 	<!--<script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>-->
-	<script src="./bower_components/angular/angular.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.1/angular-sanitize.js"></script>
 	<script src="./js/controller.js"></script>
 	<script src="./js/directives/readmore.js"></script>
 </body>
